@@ -99,7 +99,9 @@ class BillplzReturnModuleFrontController extends ModuleFrontController {
 
             // Save to Database
             $this->saveToDB($sql_result, $cart, $total, $data, $currencyid, $customer);
-
+            // Redirect to specific order page
+            // Tools::redirect('index.php?controller=order-detail&id_order=' . $this->module->currentOrder);
+            //Redirect to history of payment
             Tools::redirect('index.php?controller=history');
         } elseif (!$data['paid']) {
             // Give user option to try again if they cancel the payment
