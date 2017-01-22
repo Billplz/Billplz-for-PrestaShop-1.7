@@ -62,7 +62,7 @@ class BillplzProcessModuleFrontController extends ModuleFrontController {
 
         // Check for possible fake form request. If fake, stop
 
-        $this->checkDataIntegrity($signature, $api_key, $collection_id, $name);
+        $this->checkDataIntegrity($signature, $api_key, $collection_id, $name, $amount);
 
         // Buat verification sikit kat sini
 
@@ -97,9 +97,9 @@ class BillplzProcessModuleFrontController extends ModuleFrontController {
      * Signature using MD5, combination of API Key and Customer Email
      */
 
-    private function checkDataIntegrity($signature, $api_key, $collection_id, $name) {
+    private function checkDataIntegrity($signature, $api_key, $collection_id, $name, $amount) {
 
-        $new_signature = md5($api_key . $collection_id . strtolower($name));
+        $new_signature = md5($api_key . $collection_id . strtolower($name) . $amount);
 
         if ($signature != $new_signature)
             die('Invalid Request. Reason: Invalid Signature');
