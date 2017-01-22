@@ -57,9 +57,10 @@ class BillplzReturnModuleFrontController extends ModuleFrontController {
 
         if ($data['paid']) {
 
+            $amount = number_format(($data['amount'] / 100), 2);
             // Check for possible fake form request. If fake, stop
             $signature = isset($_GET['signature']) ? $_GET['signature'] : 'No Valid Signature';
-            $this->checkDataIntegrity($signature, $api_key, $collection_id, $data['name']);
+            $this->checkDataIntegrity($signature, $api_key, $collection_id, $data['name'], $amount);
 
             // Get Cart data from User Browser
             //$cart = new Cart($data['reference_1']);
@@ -152,9 +153,9 @@ class BillplzReturnModuleFrontController extends ModuleFrontController {
      * Signature using MD5, combination of API Key and Customer Email
      */
 
-    private function checkDataIntegrity($signature, $api_key, $collection_id, $name) {
+    private function checkDataIntegrity($signature, $api_key, $collection_id, $name, $amount) {
 
-        $new_signature = md5($api_key . $collection_id . strtolower($name));
+        $new_signature = md5($api_key . $collection_id . strtolower($name) . $amount);
 
         if ($signature != $new_signature)
             die('Invalid Request. Reason: Invalid Signature');
