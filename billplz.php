@@ -234,40 +234,6 @@ class Billplz extends PaymentModule {
     }
 
     /*
-     * Maybe this method/function is not needed in PrestaShop 1.7
-     */
-    /*
-      public function hookPayment($params) {
-
-      // Signature using MD5, combination of API Key, Collection ID and Small Leteter Customer First Name
-
-      $signature = md5(Configuration::get('BILLPLZ_APIKEY') . Configuration::get('BILLPLZ_COLLECTIONID') . strtolower($this->context->cookie->customer_firstname));
-
-      $this->smarty->assign(array(
-      'cartid' => $this->context->cart->id,
-      'amount' => number_format($this->context->cart->getOrderTotal(true, Cart::BOTH), 2),
-      'currency' => $this->context->currency->iso_code,
-      'proddesc' => $this->getProductDesc($params),
-      'name' => $this->context->cookie->customer_firstname,
-      'email' => $this->context->cookie->email,
-      'mobile' => $this->getPhoneNumber($this->context->customer->id),
-      'logoURL' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->name . '/images/logo.jpg',
-      'logoBillplz' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->name . '/logo.png',
-      'processurl' => $this->context->link->getModuleLink($this->name, 'process'),
-      'redirecturl' => $this->context->link->getModuleLink($this->name, 'return') . '&signature=' . $signature,
-      'callbackurl' => $this->context->link->getModuleLink($this->name, 'callback') . '&signature=' . $signature,
-      'signature' => $signature,
-      'this_path' => $this->_path,
-      'this_path_bw' => $this->_path,
-      'this_path_ssl' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->name . '/'
-      ));
-      // payment.tpl should post the data to the Controller (processurl) and the controller send header (Billplz Payment Page) to the user.
-      return $this->display(__FILE__, 'payment.tpl');
-      }
-     * 
-     */
-
-    /*
      *  PrestaShop 1.7 requirements
      */
 
@@ -293,7 +259,7 @@ class Billplz extends PaymentModule {
 
     public function getExternalPaymentOption($params) {
 
-        $signature = md5(Configuration::get('BILLPLZ_APIKEY') . Configuration::get('BILLPLZ_COLLECTIONID') . strtolower($this->context->cookie->customer_firstname));
+        $signature = md5(Configuration::get('BILLPLZ_APIKEY') . Configuration::get('BILLPLZ_COLLECTIONID') . strtolower($this->context->cookie->customer_firstname) . number_format($this->context->cart->getOrderTotal(true, Cart::BOTH), 2));
 
         $array = array(
             'cartid' => $this->context->cart->id,
