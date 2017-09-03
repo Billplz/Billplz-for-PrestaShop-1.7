@@ -20,7 +20,7 @@ Go to: https://github.com/wzul/Billplz-for-PrestaShop-1.6
 
 ## Known Issues
 
-1. Bug with Callback function not working properly. Thus, the callback feature has been disabled.
+1. Bug with Callback function not working properly. Thus, the **callback feature** has been **disabled**.
 
 # Troubleshooting
 
