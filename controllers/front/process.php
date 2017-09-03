@@ -1,5 +1,4 @@
 <?php
-
 /*
  * 2007-2015 PrestaShop
  *
@@ -25,17 +24,15 @@
  *  International Registered Trademark & Property of PrestaShop SA
  */
 
-/**
- * 
- * To prevent bills automatically created without user confirmation.
- * 
- * @since 3.0.1
- */
-class BillplzProcessModuleFrontController extends ModuleFrontController {
+require_once __DIR__ . '/billplz-api.php';
+
+class BillplzProcessModuleFrontController extends ModuleFrontController
+{
 
     public $php_self = 'process';
 
-    public function initContent() {
+    public function initContent()
+    {
         $this->display_column_left = false;
 
         // Get Configuration Data
@@ -43,7 +40,6 @@ class BillplzProcessModuleFrontController extends ModuleFrontController {
         $api_key = Configuration::get('BILLPLZ_APIKEY');
         $collection_id = Configuration::get('BILLPLZ_COLLECTIONID');
         $deliver = Configuration::get('BILLPLZ_BILLNOTIFY');
-        $mode = Configuration::get('BILLPLZ_MODE') ? 'Production' : 'Staging';
 
         // If data not available, put dummy data
 
@@ -52,60 +48,48 @@ class BillplzProcessModuleFrontController extends ModuleFrontController {
         $email = isset($_POST['email']) ? $_POST['email'] : 'wan@wanzul-hosting.com';
         $mobile = isset($_POST['mobile']) ? $_POST['mobile'] : '60145356443';
         $name = isset($_POST['name']) ? $_POST['name'] : 'Ahmad';
-        $signature = isset($_POST['signature']) ? $_POST['signature'] : 'No Valid Signature';
-        $redirect_url = isset($_POST['redirecturl']) ? $_POST['redirecturl'] : 'http://fb.com/billplzplugin';
-        $callback_url = isset($_POST['callbackurl']) ? $_POST['callbackurl'] : 'http://google.com';
+        $hash = isset($_POST['hash']) ? $_POST['hash'] : 'No Valid Hash';
+        $redirect_url = isset($_SERVER['HTTPS']) ? ($_SERVER['HTTPS'] == "on" ? 'https://' : 'http://') : 'http://' . $_SERVER['HTTP_HOST'] . __PS_BASE_URI__ . 'index.php?fc=module&module=billplz&controller=return';
+        $callback_url = isset($_SERVER['HTTPS']) ? ($_SERVER['HTTPS'] == "on" ? 'https://' : 'http://') : 'http://' . $_SERVER['HTTP_HOST'] . __PS_BASE_URI__ . 'index.php?fc=module&module=billplz&controller=callback';
         $reference_1 = isset($_POST['cartid']) ? $_POST['cartid'] : '5';
-        $reference_2_label = "Currency";
-        $reference_2 = isset($_POST['currency']) ? $_POST['currency'] : 'MYR';
-
-
+        $reference_2 = isset($_POST['currency']) ? $_POST['currency'] : '';
+        
         // Check for possible fake form request. If fake, stop
+        $this->checkDataIntegrity($hash, $reference_1, $amount);
 
-        $this->checkDataIntegrity($signature, $api_key, $collection_id, $name, $amount);
-
-        // Buat verification sikit kat sini
-
-        require_once 'billplzapi.php';
-        $billplz = new billplzapi;
-        $billplz->setAmount($amount)
-                ->setCollection($collection_id)
-                ->setDeliver($deliver)
-                ->setDescription($description)
-                ->setEmail($email)
-                ->setMobile($mobile)
-                ->setName($name)
-                ->setPassbackURL($redirect_url, $callback_url)
-                ->setReference_1($reference_1)
-                ->setReference_1_Label("ID")
-                ->setReference_2_Label("ISO")
-                ->setReference_2($reference_2)
-                ->create_bill($api_key, $mode);
-
+        $billplz = new Billplz_API(trim($api_key));
+        $billplz
+            ->setCollection($collection_id)
+            ->setName($name)
+            ->setAmount($amount)
+            ->setDeliver($deliver)
+            ->setMobile($mobile)
+            ->setEmail($email)
+            ->setDescription($description)
+            ->setReference_1($reference_1)
+            ->setReference_1_Label('Cart ID')
+            ->setReference_2($reference_2)
+            ->setPassbackURL($callback_url, $redirect_url)
+            ->create_bill(true);
 
         $url = $billplz->getURL();
 
+
         if (empty($url)) {
-            error_log(var_export($billplz, true));
-            Tools::redirect('http://fb.com/billplzplugin');
+            exit('Something went wrong! ' . $billplz->getErrorMessage());
         } else {
             Tools::redirect($url);
         }
     }
 
-    /*
-     * Signature using MD5, combination of API Key and Customer Email
-     */
+    private function checkDataIntegrity($old_hash, $cart_id, $amount)
+    {
+        $x_signature = Configuration::get('BILLPLZ_X_SIGNATURE_KEY');
+        $raw_string = $cart_id . $amount;
+        $filtered_string = preg_replace("/[^a-zA-Z0-9]+/", "", $raw_string);
+        $hash = hash_hmac('sha256', $filtered_string, $x_signature);
 
-    private function checkDataIntegrity($signature, $api_key, $collection_id, $name, $amount) {
-
-        $new_signature = md5($api_key . $collection_id . strtolower($name) . $amount);
-
-        if ($signature != $new_signature)
-            die('Invalid Request. Reason: Invalid Signature');
-        else {
-            // Sambung execution seperti biasa
-        }
+        if ($hash != $old_hash)
+            die('Invalid Request. Reason: Input has been tempered');
     }
-
 }

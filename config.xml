@@ -2,7 +2,7 @@
 <module>
 	<name>billplz</name>
 	<displayName><![CDATA[Billplz Payment Gateway]]></displayName>
-	<version><![CDATA[3.0.0]]></version>
+	<version><![CDATA[3.0.1]]></version>
 	<description><![CDATA[Billplz configuration module]]></description>
 	<author><![CDATA[Wan Zulkarnain]]></author>
 	<tab><![CDATA[payments_gateways]]></tab>
