@@ -231,7 +231,7 @@ class Billplz extends PaymentModule
         $customer = new Customer((int) $cart->id_customer);
         $address = new Address(intval($cart->id_address_invoice));
 
-        $amount = number_format($this->context->cart->getOrderTotal(true, Cart::BOTH), 2);
+        $amount = number_format($cart->getOrderTotal(true, Cart::BOTH), 2);
         $x_signature = Configuration::get('BILLPLZ_X_SIGNATURE_KEY');
 
         $raw_string = $cart_id . $amount;
