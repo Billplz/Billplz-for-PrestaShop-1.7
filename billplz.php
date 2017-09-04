@@ -57,7 +57,6 @@ class Billplz extends PaymentModule
 				');
 
         // Pre-set the default values
-        Configuration::updateValue('BILLPLZ_MODE', true);
         Configuration::updateValue('BILLPLZ_BILLNOTIFY', false);
 
         return parent::install() &&
