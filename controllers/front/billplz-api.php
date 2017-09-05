@@ -605,6 +605,13 @@ if (!class_exists('Billplz_API')) {
         public function curl_action($data = '')
         {
 
+            if ($this->action == 'GETCOLLECTIONINDEX' || $this->action == 'GETTRANSACTIONINDEX') {
+                $this->url .= '?page=' . $data['page'] . '&status=' . $data['status'];
+            } else if ($this->action == 'CHECKCOLLECTION') {
+                $this->url .= $data['id'];
+            }
+
+
             $process = curl_init();
             curl_setopt($process, CURLOPT_URL, $this->url);
             curl_setopt($process, CURLOPT_HEADER, 0);
