@@ -11,7 +11,7 @@ class Billplz extends PaymentModule
     {
         $this->name = 'billplz';
         $this->tab = 'payments_gateways';
-        $this->version = '3.0.2';
+        $this->version = '3.0.3';
         $this->author = 'Wan Zulkarnain';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);

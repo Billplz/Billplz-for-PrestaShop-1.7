@@ -49,11 +49,14 @@ class BillplzProcessModuleFrontController extends ModuleFrontController
         $mobile = isset($_POST['mobile']) ? $_POST['mobile'] : '60145356443';
         $name = isset($_POST['name']) ? $_POST['name'] : 'Ahmad';
         $hash = isset($_POST['hash']) ? $_POST['hash'] : 'No Valid Hash';
-        $redirect_url = isset($_SERVER['HTTPS']) ? ($_SERVER['HTTPS'] == "on" ? 'https://' : 'http://') : 'http://' . $_SERVER['HTTP_HOST'] . __PS_BASE_URI__ . 'index.php?fc=module&module=billplz&controller=return';
-        $callback_url = isset($_SERVER['HTTPS']) ? ($_SERVER['HTTPS'] == "on" ? 'https://' : 'http://') : 'http://' . $_SERVER['HTTP_HOST'] . __PS_BASE_URI__ . 'index.php?fc=module&module=billplz&controller=callback';
+        $redirect_url = isset($_SERVER['HTTPS']) ? ($_SERVER['HTTPS'] == "on" ? 'https://' : 'http://') : 'http://';
+        $callback_url = isset($_SERVER['HTTPS']) ? ($_SERVER['HTTPS'] == "on" ? 'https://' : 'http://') : 'http://';
         $reference_1 = isset($_POST['cartid']) ? $_POST['cartid'] : '5';
         $reference_2 = isset($_POST['currency']) ? $_POST['currency'] : '';
-        
+
+        $redirect_url .= $_SERVER['HTTP_HOST'] . __PS_BASE_URI__ . 'index.php?fc=module&module=billplz&controller=return';
+        $callback_url .= $_SERVER['HTTP_HOST'] . __PS_BASE_URI__ . 'index.php?fc=module&module=billplz&controller=callback';
+
         // Check for possible fake form request. If fake, stop
         $this->checkDataIntegrity($hash, $reference_1, $amount);
 
