@@ -6,8 +6,9 @@ class BillplzReturnModuleFrontController extends ModuleFrontController
 {
     public function postProcess()
     {
+        $x_signature = trim(Configuration::get('BILLPLZ_X_SIGNATURE'));
         try {
-            $data = BillplzConnect::getXSignature(Configuration::get('BILLPLZ_X_SIGNATURE'));
+            $data = BillplzConnect::getXSignature($x_signature);
         } catch (Exception $e) {
             header('HTTP/1.1 403 X Signature matching failed', true, 403);
             exit();
