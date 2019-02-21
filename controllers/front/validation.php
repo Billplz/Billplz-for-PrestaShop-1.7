@@ -65,23 +65,27 @@ class BillplzValidationModuleFrontController extends ModuleFrontController
         if (empty($parameter['name'])) {
             $parameter['name'] =  !empty($blog_name) ? $blog_name : 'Payer Name Unavailable';
         }
-        
+
+        $this->module->validateOrder($cart->id, Configuration::get('BILLPLZ_OS_WAITING'), '0.0', $this->module->displayName, "", array(), (int)$currency->id, false, $customer->secure_key);
+
+        $order_id = Order::getIdByCartId($cart->id);
+
         $optional = array(
-            'redirect_url' => $parameter['callback_url']
+            'redirect_url' => $parameter['callback_url'],
+            'reference_1_label' => 'Cart ID',
+            'reference_1' => $cart->id,
+            'reference_2_label' => 'Order ID',
+            'reference_2' => $order_id
         );
 
         $connect = new BillplzConnect(trim($config['BILLPLZ_API_KEY']));
         $connect->detectMode();
-        
         $billplz = new BillplzApi($connect);
-        
         list($rheader, $rbody) = $billplz->toArray($billplz->createBill($parameter, $optional, '0'));
 
         if ($rheader !== 200) {
             Tools::redirect('index.php?controller=order&step=1');
         }
-
-        $this->module->validateOrder($cart->id, Configuration::get('BILLPLZ_OS_WAITING'), '0.0', $this->module->displayName, "Payment pending. Bill ID: {$rbody['id']}", array('transaction_id' => $rbody['id']), (int)$currency->id, false, $customer->secure_key);
 
         Db::getInstance()->insert(
             'billplz',
