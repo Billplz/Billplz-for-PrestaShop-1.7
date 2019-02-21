@@ -81,7 +81,7 @@ class BillplzValidationModuleFrontController extends ModuleFrontController
             Tools::redirect('index.php?controller=order&step=1');
         }
 
-        $this->module->validateOrder($cart->id, Configuration::get('BILLPLZ_OS_WAITING'), $total, $this->module->displayName, "Payment pending. Bill ID: {$rbody['id']}", $rbody, (int)$currency->id, false, $customer->secure_key);
+        $this->module->validateOrder($cart->id, Configuration::get('BILLPLZ_OS_WAITING'), '0.0', $this->module->displayName, "Payment pending. Bill ID: {$rbody['id']}", array('transaction_id' => $rbody['id']), (int)$currency->id, false, $customer->secure_key);
 
         Db::getInstance()->insert(
             'billplz',
