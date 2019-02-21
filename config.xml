@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <module>
-	<name>billplz</name>
-	<displayName><![CDATA[Billplz Payment Gateway]]></displayName>
-	<version><![CDATA[3.0.3]]></version>
-	<description><![CDATA[Billplz configuration module]]></description>
-	<author><![CDATA[Wan Zulkarnain]]></author>
-	<tab><![CDATA[payments_gateways]]></tab>
-	<confirmUninstall><![CDATA[Are you sure you want to uninstall?]]></confirmUninstall>
-	<is_configurable>1</is_configurable>
-	<need_instance>0</need_instance>
-	<limited_countries></limited_countries>
+    <name>billplz</name>
+    <displayName><![CDATA[Billplz payment]]></displayName>
+    <version><![CDATA[3.1.0]]></version>
+    <description><![CDATA[Accept payments by Billplz.]]></description>
+    <author><![CDATA[Billplz Sdn. Bhd.]]></author>
+    <tab><![CDATA[payments_gateways]]></tab>
+    <confirmUninstall><![CDATA[Are you sure about removing these details?]]></confirmUninstall>
+    <is_configurable>1</is_configurable>
+    <need_instance>1</need_instance>
+    <limited_countries></limited_countries>
 </module>
