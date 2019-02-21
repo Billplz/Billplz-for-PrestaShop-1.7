@@ -52,7 +52,7 @@ class BillplzReturnModuleFrontController extends ModuleFrontController
                     $order->setCurrentState(Configuration::get('PS_OS_PAYMENT'));
                 }
             }
-            header('HTTP/1.1 200 OK');
+            exit;
         }
     }
 }
