@@ -1,4 +1,28 @@
 <?php
+/**
+ * 2007-2019 PrestaShop
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+ * versions in the future. If you wish to customize PrestaShop for your
+ * needs please refer to http://www.prestashop.com for more information.
+ *
+ *  @author    PrestaShop SA <contact@prestashop.com>
+ *  @copyright 2007-2019 PrestaShop SA
+ *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ *  International Registered Trademark & Property of PrestaShop SA
+ */
 
 class BillplzConnect
 {
@@ -56,21 +80,21 @@ class BillplzConnect
         curl_setopt($this->process, CURLOPT_POST, 0);
         $body = curl_exec($this->process);
         $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
-        $return = array($header,$body);
-        
+        $return = array($header, $body);
+
         return $return;
     }
 
     public function getCollectionIndex($parameter = array())
     {
-        $url = $this->url . 'v4/collections?'.http_build_query($parameter);
+        $url = $this->url . 'v4/collections?' . http_build_query($parameter);
 
         curl_setopt($this->process, CURLOPT_URL, $url);
         curl_setopt($this->process, CURLOPT_POST, 0);
         $body = curl_exec($this->process);
         $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
-        $return = array($header,$body);
-        
+        $return = array($header, $body);
+
         return $return;
     }
 
@@ -91,10 +115,10 @@ class BillplzConnect
         }
 
         if (!empty($split_payments)) {
-            $body.= '&' . implode('&', $split_payments);
+            $body .= '&' . implode('&', $split_payments);
 
             if (!empty($split_header)) {
-                $body.= '&' . $split_header;
+                $body .= '&' . $split_header;
             }
         }
 
@@ -102,8 +126,8 @@ class BillplzConnect
         curl_setopt($this->process, CURLOPT_POSTFIELDS, $body);
         $body = curl_exec($this->process);
         $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
-        $return = array($header,$body);
-        
+        $return = array($header, $body);
+
         return $return;
     }
 
@@ -125,62 +149,62 @@ class BillplzConnect
 
         if (!empty($split_payments)) {
             unset($optional['split_payments']);
-            $body.= '&' . implode('&', $split_payments);
+            $body .= '&' . implode('&', $split_payments);
             if (!empty($split_header)) {
                 unset($optional['split_header']);
-                $body.= '&' . $split_header;
+                $body .= '&' . $split_header;
             }
         }
 
         if (!empty($optional)) {
-            $body.= '&' . http_build_query($optional);
+            $body .= '&' . http_build_query($optional);
         }
 
         curl_setopt($this->process, CURLOPT_URL, $url);
         curl_setopt($this->process, CURLOPT_POSTFIELDS, $body);
         $body = curl_exec($this->process);
         $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
-        $return = array($header,$body);
-        
+        $return = array($header, $body);
+
         return $return;
     }
 
     public function getCollection($id)
     {
-        $url = $this->url . 'v4/collections/'.$id;
+        $url = $this->url . 'v4/collections/' . $id;
 
         curl_setopt($this->process, CURLOPT_URL, $url);
         curl_setopt($this->process, CURLOPT_POST, 0);
         $body = curl_exec($this->process);
         $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
-        $return = array($header,$body);
-        
+        $return = array($header, $body);
+
         return $return;
     }
 
     public function getOpenCollection($id)
     {
-        $url = $this->url . 'v4/open_collections/'.$id;
-        
+        $url = $this->url . 'v4/open_collections/' . $id;
+
         curl_setopt($this->process, CURLOPT_URL, $url);
         curl_setopt($this->process, CURLOPT_POST, 0);
         $body = curl_exec($this->process);
         $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
-        $return = array($header,$body);
-        
+        $return = array($header, $body);
+
         return $return;
     }
 
     public function getOpenCollectionIndex($parameter = array())
     {
-        $url = $this->url . 'v4/open_collections?'.http_build_query($parameter);
+        $url = $this->url . 'v4/open_collections?' . http_build_query($parameter);
 
         curl_setopt($this->process, CURLOPT_URL, $url);
         curl_setopt($this->process, CURLOPT_POST, 0);
         $body = curl_exec($this->process);
         $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
-        $return = array($header,$body);
-        
+        $return = array($header, $body);
+
         return $return;
     }
 
@@ -194,21 +218,21 @@ class BillplzConnect
         curl_setopt($this->process, CURLOPT_POSTFIELDS, http_build_query($data));
         $body = curl_exec($this->process);
         $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
-        $return = array($header,$body);
-        
+        $return = array($header, $body);
+
         return $return;
     }
 
     public function getMPICollection($id)
     {
-        $url = $this->url . 'v4/mass_payment_instruction_collections/'.$id;
-        
+        $url = $this->url . 'v4/mass_payment_instruction_collections/' . $id;
+
         curl_setopt($this->process, CURLOPT_URL, $url);
         curl_setopt($this->process, CURLOPT_POST, 0);
         $body = curl_exec($this->process);
         $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
-        $return = array($header,$body);
-        
+        $return = array($header, $body);
+
         return $return;
     }
 
@@ -226,21 +250,21 @@ class BillplzConnect
         curl_setopt($this->process, CURLOPT_POSTFIELDS, http_build_query($data));
         $body = curl_exec($this->process);
         $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
-        $return = array($header,$body);
-        
+        $return = array($header, $body);
+
         return $return;
     }
 
     public function getMPI($id)
     {
-        $url = $this->url . 'v4/mass_payment_instructions/'.$id;
-        
+        $url = $this->url . 'v4/mass_payment_instructions/' . $id;
+
         curl_setopt($this->process, CURLOPT_URL, $url);
         curl_setopt($this->process, CURLOPT_POST, 0);
         $body = curl_exec($this->process);
         $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
-        $return = array($header,$body);
-        
+        $return = array($header, $body);
+
         return $return;
     }
 
@@ -248,29 +272,31 @@ class BillplzConnect
     {
         $signingString = '';
 
-        if (isset($_GET['billplz']['id']) &&isset($_GET['billplz']['paid_at']) && isset($_GET['billplz']['paid']) && isset($_GET['billplz']['x_signature'])) {
+        $billplz_params = Tools::getValue('billplz');
+
+        if (isset($billplz_params['id']) && isset($billplz_params['paid_at']) && isset($billplz_params['paid']) && isset($billplz_params['x_signature'])) {
             $data = array(
-                'id' => $_GET['billplz']['id'] ,
-                'paid_at' =>  $_GET['billplz']['paid_at'],
-                'paid' => $_GET['billplz']['paid'],
-                'x_signature' =>  $_GET['billplz']['x_signature']
+                'id' => $billplz_params['id'],
+                'paid_at' => $billplz_params['paid_at'],
+                'paid' => $billplz_params['paid'],
+                'x_signature' => $billplz_params['x_signature'],
             );
             $type = 'redirect';
-        } elseif (isset($_POST['x_signature'])) {
+        } elseif (Tools::getIsset('x_signature')) {
             $data = array(
-               'amount' => isset($_POST['amount']) ? $_POST['amount'] : '',
-               'collection_id' => isset($_POST['collection_id']) ? $_POST['collection_id'] : '',
-               'due_at' => isset($_POST['due_at']) ? $_POST['due_at'] : '',
-               'email' => isset($_POST['email']) ? $_POST['email'] : '',
-               'id' => isset($_POST['id']) ? $_POST['id'] : '',
-               'mobile' => isset($_POST['mobile']) ? $_POST['mobile'] : '',
-               'name' => isset($_POST['name']) ? $_POST['name'] : '',
-               'paid_amount' => isset($_POST['paid_amount']) ? $_POST['paid_amount'] : '',
-               'paid_at' => isset($_POST['paid_at']) ? $_POST['paid_at'] : '',
-               'paid' => isset($_POST['paid']) ? $_POST['paid'] : '',
-               'state' => isset($_POST['state']) ? $_POST['state'] : '',
-               'url' => isset($_POST['url']) ? $_POST['url'] : '',
-               'x_signature' => isset($_POST['x_signature']) ? $_POST['x_signature'] :'',
+                'amount' => Tools::getValue('amount', ''),
+                'collection_id' => Tools::getValue('collection_id', ''),
+                'due_at' => Tools::getValue('due_at', ''),
+                'email' => Tools::getValue('email', ''),
+                'id' => Tools::getValue('id', ''),
+                'mobile' => Tools::getValue('mobile', ''),
+                'name' => Tools::getValue('name', ''),
+                'paid_amount' => Tools::getValue('paid_amount', ''),
+                'paid_at' => Tools::getValue('paid_at', ''),
+                'paid' => Tools::getValue('paid', ''),
+                'state' => Tools::getValue('state', ''),
+                'url' => Tools::getValue('url', ''),
+                'x_signature' => Tools::getValue('x_signature', ''),
             );
             $type = 'callback';
         } else {
@@ -278,12 +304,12 @@ class BillplzConnect
         }
 
         foreach ($data as $key => $value) {
-            if (isset($_GET['billplz']['id'])) {
-                $signingString .= 'billplz'.$key . $value;
+            if (isset($billplz_params['id'])) {
+                $signingString .= 'billplz' . $key . $value;
             } else {
                 $signingString .= $key . $value;
             }
-            if (($key === 'url' && isset($_POST['x_signature']))|| ($key === 'paid' && isset($_GET['billplz']['id']))) {
+            if (($key === 'url' && Tools::getIsset('x_signature')) || ($key === 'paid' && isset($billplz_params['id']))) {
                 break;
             } else {
                 $signingString .= '|';
@@ -307,17 +333,15 @@ class BillplzConnect
 
     public function deactivateCollection($title, $option = 'deactivate')
     {
-        $url = $this->url . 'v3/collections/'.$title.'/'.$option;
-
-        $data = ['title' => $title];
+        $url = $this->url . 'v3/collections/' . $title . '/' . $option;
 
         curl_setopt($this->process, CURLOPT_URL, $url);
         curl_setopt($this->process, CURLOPT_POST, 1);
         curl_setopt($this->process, CURLOPT_POSTFIELDS, http_build_query(array()));
         $body = curl_exec($this->process);
         $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
-        $return = array($header,$body);
-        
+        $return = array($header, $body);
+
         return $return;
     }
 
@@ -335,73 +359,73 @@ class BillplzConnect
         curl_setopt($this->process, CURLOPT_POSTFIELDS, http_build_query($data));
         $body = curl_exec($this->process);
         $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
-        $return = array($header,$body);
-        
+        $return = array($header, $body);
+
         return $return;
     }
 
     public function getBill($id)
     {
-        $url = $this->url . 'v3/bills/'.$id;
+        $url = $this->url . 'v3/bills/' . $id;
 
         curl_setopt($this->process, CURLOPT_URL, $url);
         curl_setopt($this->process, CURLOPT_POST, 0);
         $body = curl_exec($this->process);
         $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
-        $return = array($header,$body);
-        
+        $return = array($header, $body);
+
         return $return;
     }
 
     public function deleteBill($id)
     {
-        $url = $this->url . 'v3/bills/'.$id;
+        $url = $this->url . 'v3/bills/' . $id;
 
         curl_setopt($this->process, CURLOPT_URL, $url);
         curl_setopt($this->process, CURLOPT_CUSTOMREQUEST, "DELETE");
         $body = curl_exec($this->process);
         $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
-        $return = array($header,$body);
-        
+        $return = array($header, $body);
+
         return $return;
     }
 
     public function bankAccountCheck($id)
     {
-        $url = $this->url . 'v3/check/bank_account_number/'.$id;
-        
+        $url = $this->url . 'v3/check/bank_account_number/' . $id;
+
         curl_setopt($this->process, CURLOPT_URL, $url);
         curl_setopt($this->process, CURLOPT_POST, 0);
         $body = curl_exec($this->process);
         $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
-        $return = array($header,$body);
-        
+        $return = array($header, $body);
+
         return $return;
     }
 
     public function getPaymentMethodIndex($id)
     {
-        $url = $this->url . 'v3/collections/'.$id.'/payment_methods';
-        
+        $url = $this->url . 'v3/collections/' . $id . '/payment_methods';
+
         curl_setopt($this->process, CURLOPT_URL, $url);
         curl_setopt($this->process, CURLOPT_POST, 0);
         $body = curl_exec($this->process);
         $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
-        $return = array($header,$body);
-        
+        $return = array($header, $body);
+
         return $return;
     }
 
     public function getTransactionIndex($id, $parameter)
     {
-        $url = $this->url . 'v3/bills/'.$id.'/transactions?'.http_build_query($parameter);
+        $url = $this->url . 'v3/bills/' . $id . '/transactions?' . http_build_query($parameter);
 
         curl_setopt($this->process, CURLOPT_URL, $url);
         curl_setopt($this->process, CURLOPT_POST, 0);
         $body = curl_exec($this->process);
         $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
-        $return = array($header,$body);
-        
+        $return = array($header, $body);
+
         return $return;
     }
 
@@ -410,7 +434,7 @@ class BillplzConnect
         if (!isset($parameter['collection_id'])) {
             throw new \Exception('Collection ID is not passed on updatePaymethodMethod');
         }
-        $url = $this->url . 'v3/collections/'.$parameter['collection_id'].'/payment_methods';
+        $url = $this->url . 'v3/collections/' . $parameter['collection_id'] . '/payment_methods';
 
         unset($parameter['collection_id']);
         $data = $parameter;
@@ -426,8 +450,8 @@ class BillplzConnect
         curl_setopt($this->process, CURLOPT_POSTFIELDS, implode('&', $body));
         $body = curl_exec($this->process);
         $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
-        $return = array($header,$body);
-        
+        $return = array($header, $body);
+
         return $return;
     }
 
@@ -440,27 +464,27 @@ class BillplzConnect
         $parameter = http_build_query($parameter);
         $parameter = preg_replace('/%5B[0-9]+%5D/simU', '%5B%5D', $parameter);
 
-        $url = $this->url . 'v3/bank_verification_services?'.$parameter;
+        $url = $this->url . 'v3/bank_verification_services?' . $parameter;
 
         curl_setopt($this->process, CURLOPT_URL, $url);
         curl_setopt($this->process, CURLOPT_POST, 0);
         $body = curl_exec($this->process);
         $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
-        $return = array($header,$body);
-        
+        $return = array($header, $body);
+
         return $return;
     }
 
     public function getBankAccount($id)
     {
-        $url = $this->url . 'v3/bank_verification_services/'.$id;
-        
+        $url = $this->url . 'v3/bank_verification_services/' . $id;
+
         curl_setopt($this->process, CURLOPT_URL, $url);
         curl_setopt($this->process, CURLOPT_POST, 0);
         $body = curl_exec($this->process);
         $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
-        $return = array($header,$body);
-        
+        $return = array($header, $body);
+
         return $return;
     }
 
@@ -472,20 +496,20 @@ class BillplzConnect
         curl_setopt($this->process, CURLOPT_POSTFIELDS, http_build_query($parameter));
         $body = curl_exec($this->process);
         $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
-        $return = array($header,$body);
+        $return = array($header, $body);
         return $return;
     }
 
     public function getFpxBanks()
     {
         $url = $this->url . 'v3/fpx_banks';
-        
+
         curl_setopt($this->process, CURLOPT_URL, $url);
         curl_setopt($this->process, CURLOPT_POST, 0);
         $body = curl_exec($this->process);
         $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
-        $return = array($header,$body);
-        
+        $return = array($header, $body);
+
         return $return;
     }
 

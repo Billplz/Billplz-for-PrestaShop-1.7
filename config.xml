@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <module>
     <name>billplz</name>
-    <displayName><![CDATA[Billplz payment]]></displayName>
+    <displayName><![CDATA[Billplz]]></displayName>
     <version><![CDATA[3.1.0]]></version>
     <description><![CDATA[Accept payments by Billplz.]]></description>
     <author><![CDATA[Billplz Sdn. Bhd.]]></author>
@@ -10,4 +10,5 @@
     <is_configurable>1</is_configurable>
     <need_instance>1</need_instance>
     <limited_countries></limited_countries>
+    <admin>Billplz</admin>
 </module>

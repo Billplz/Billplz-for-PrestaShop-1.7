@@ -1,4 +1,28 @@
 <?php
+/**
+ * 2007-2019 PrestaShop
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+ * versions in the future. If you wish to customize PrestaShop for your
+ * needs please refer to http://www.prestashop.com for more information.
+ *
+ *  @author    PrestaShop SA <contact@prestashop.com>
+ *  @copyright 2007-2019 PrestaShop SA
+ *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ *  International Registered Trademark & Property of PrestaShop SA
+ */
 
 require_once _PS_MODULE_DIR_ . 'billplz/classes/BillplzAPI.php';
 require_once _PS_MODULE_DIR_ . 'billplz/classes/BillplzConnect.php';
@@ -45,17 +69,17 @@ class BillplzValidationModuleFrontController extends ModuleFrontController
         $products = $cart->getProducts();
         $product_description = '';
         foreach ($products as $product) {
-            $product_description.="{$product['name']} ";
+            $product_description .= "{$product['name']} ";
         }
 
         $parameter = array(
             'collection_id' => trim($config['BILLPLZ_COLLECTION_ID']),
             'email' => trim($customer->email),
-            'mobile'=> trim((empty($address->phone)) ? $address->phone_mobile : $address->phone),
+            'mobile' => trim((empty($address->phone)) ? $address->phone_mobile : $address->phone),
             'name' => trim($customer->firstname . " " . $customer->lastname),
-            'amount' => strval($total * 100),
+            'amount' => (string) ($total * 100),
             'callback_url' => $this->context->link->getModuleLink($module['name'], 'return', array(), true),
-            'description' => mb_substr($product_description, 0, 200)
+            'description' => mb_substr($product_description, 0, 200),
         );
 
         if (empty($parameter['mobile']) && empty($parameter['email'])) {
@@ -63,10 +87,10 @@ class BillplzValidationModuleFrontController extends ModuleFrontController
         }
 
         if (empty($parameter['name'])) {
-            $parameter['name'] =  !empty($blog_name) ? $blog_name : 'Payer Name Unavailable';
+            $parameter['name'] = 'Payer Name Unavailable';
         }
 
-        $this->module->validateOrder($cart->id, Configuration::get('BILLPLZ_OS_WAITING'), '0.0', $this->module->displayName, "", array(), (int)$currency->id, false, $customer->secure_key);
+        $this->module->validateOrder($cart->id, Configuration::get('BILLPLZ_OS_WAITING'), '0.0', $this->module->displayName, "", array(), (int) $currency->id, false, $customer->secure_key);
 
         $order_id = Order::getIdByCartId($cart->id);
 
@@ -75,7 +99,7 @@ class BillplzValidationModuleFrontController extends ModuleFrontController
             'reference_1_label' => 'Cart ID',
             'reference_1' => $cart->id,
             'reference_2_label' => 'Order ID',
-            'reference_2' => $order_id
+            'reference_2' => $order_id,
         );
 
         $connect = new BillplzConnect(trim($config['BILLPLZ_API_KEY']));

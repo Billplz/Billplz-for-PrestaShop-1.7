@@ -1,4 +1,28 @@
 <?php
+/**
+ * 2007-2019 PrestaShop
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+ * versions in the future. If you wish to customize PrestaShop for your
+ * needs please refer to http://www.prestashop.com for more information.
+ *
+ *  @author    PrestaShop SA <contact@prestashop.com>
+ *  @copyright 2007-2019 PrestaShop SA
+ *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ *  International Registered Trademark & Property of PrestaShop SA
+ */
 
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
@@ -69,7 +93,7 @@ class Billplz extends PaymentModule
                 PRIMARY KEY (`id`)
             ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;'
         );
-        
+
         if (!parent::install() || !$this->registerHook('paymentReturn') || !$this->registerHook('paymentOptions') || !$this->installOrderState()) {
             return false;
         }
@@ -92,8 +116,8 @@ class Billplz extends PaymentModule
             $order_state->logable = false;
             $order_state->invoice = false;
             if ($order_state->add()) {
-                $source = _PS_MODULE_DIR_.'billplz/logo.png';
-                $destination = _PS_ROOT_DIR_.'/img/os/'.(int) $order_state->id.'.gif';
+                $source = _PS_MODULE_DIR_ . 'billplz/logo.png';
+                $destination = _PS_ROOT_DIR_ . '/img/os/' . (int) $order_state->id . '.gif';
                 copy($source, $destination);
             }
 
@@ -168,9 +192,9 @@ class Billplz extends PaymentModule
 
         $newOption = new PaymentOption();
         $newOption->setModuleName($this->name)
-                ->setCallToActionText($this->trans('Pay by Billplz', array(), 'Modules.Billplz.Shop'))
-                ->setAction($this->context->link->getModuleLink($this->name, 'validation', array(), true));
-        
+            ->setCallToActionText($this->trans('Pay by Billplz', array(), 'Modules.Billplz.Shop'))
+            ->setAction($this->context->link->getModuleLink($this->name, 'validation', array(), true));
+
         $payment_options = [
             $newOption,
         ];
@@ -187,9 +211,7 @@ class Billplz extends PaymentModule
 
     public function checkCurrency($cart)
     {
-        if (!(int) $current_id_currency) {
-            $current_id_currency = Context::getContext()->currency->id;
-        }
+        //$current_id_currency = Context::getContext()->currency->id;
 
         if (!$this->currencies) {
             return false;
@@ -215,7 +237,7 @@ class Billplz extends PaymentModule
             'form' => array(
                 'legend' => array(
                     'title' => $this->trans('Billplz account details', array(), 'Modules.Billplz.Admin'),
-                    'icon' => 'icon-gear'
+                    'icon' => 'icon-gear',
                 ),
                 'input' => array(
                     array(
@@ -223,46 +245,46 @@ class Billplz extends PaymentModule
                         'label' => $this->trans('API Secret Key', array(), 'Modules.Billplz.Admin'),
                         'name' => 'BILLPLZ_API_KEY',
                         'desc' => $this->trans('It can be from Production or Staging. It can be retrieved from Billplz Account Settings page.', array(), 'Modules.Billplz.Admin'),
-                        'required' => true
+                        'required' => true,
                     ),
                     array(
                         'type' => 'text',
                         'label' => $this->trans('Collection ID', array(), 'Modules.Billplz.Admin'),
                         'name' => 'BILLPLZ_COLLECTION_ID',
                         'desc' => $this->trans('Enter your chosen specific Billing Collection ID. It can be retrieved from Billplz Billing page.', array(), 'Modules.Billplz.Admin'),
-                        'required' => true
+                        'required' => true,
                     ),
                     array(
                         'type' => 'text',
                         'label' => $this->trans('X Signature Key', array(), 'Modules.Billplz.Admin'),
                         'name' => 'BILLPLZ_X_SIGNATURE',
                         'desc' => $this->trans('It can be from Production or Staging. It can be retrieved from Billplz Account Settings page.', array(), 'Modules.Billplz.Admin'),
-                        'required' => true
+                        'required' => true,
                     ),
                 ),
                 'submit' => array(
                     'title' => $this->trans('Save', array(), 'Admin.Actions'),
-                )
+                ),
             ),
         );
 
         $helper = new HelperForm();
         $helper->show_toolbar = false;
         $helper->table = $this->table;
-        $lang = new Language((int)Configuration::get('PS_LANG_DEFAULT'));
+        $lang = new Language((int) Configuration::get('PS_LANG_DEFAULT'));
         $helper->default_form_language = $lang->id;
-        $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') ? : 0;
+        $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') ?: 0;
         $this->fields_form = array();
-        $helper->id = (int)Tools::getValue('id_carrier');
+        $helper->id = (int) Tools::getValue('id_carrier');
         $helper->identifier = $this->identifier;
         $helper->submit_action = 'btnSubmit';
-        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false).'&configure='
-            .$this->name.'&tab_module='.$this->tab.'&module_name='.$this->name;
+        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false) . '&configure='
+        . $this->name . '&tab_module=' . $this->tab . '&module_name=' . $this->name;
         $helper->token = Tools::getAdminTokenLite('AdminModules');
         $helper->tpl_vars = array(
             'fields_value' => $this->getConfigFieldsValues(),
             'languages' => $this->context->controller->getLanguages(),
-            'id_language' => $this->context->language->id
+            'id_language' => $this->context->language->id,
         );
 
         return $helper->generateForm(array($fields_form));
@@ -273,7 +295,7 @@ class Billplz extends PaymentModule
         return array(
             'BILLPLZ_API_KEY' => Tools::getValue('BILLPLZ_API_KEY', Configuration::get('BILLPLZ_API_KEY')),
             'BILLPLZ_COLLECTION_ID' => Tools::getValue('BILLPLZ_COLLECTION_ID', Configuration::get('BILLPLZ_COLLECTION_ID')),
-            'BILLPLZ_X_SIGNATURE' => Tools::getValue('BILLPLZ_X_SIGNATURE', Configuration::get('BILLPLZ_X_SIGNATURE'))
+            'BILLPLZ_X_SIGNATURE' => Tools::getValue('BILLPLZ_X_SIGNATURE', Configuration::get('BILLPLZ_X_SIGNATURE')),
         );
     }
 }
