@@ -30,7 +30,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class Billplz extends PaymentModule
+class Billplz extends \PaymentModule
 {
     protected $_html = '';
     protected $_postErrors = array();

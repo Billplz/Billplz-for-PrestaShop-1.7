@@ -93,6 +93,8 @@ class BillplzValidationModuleFrontController extends ModuleFrontController
         $this->module->validateOrder($cart->id, Configuration::get('BILLPLZ_OS_WAITING'), '0.0', $this->module->displayName, "", array(), (int) $currency->id, false, $customer->secure_key);
 
         $order_id = Order::getIdByCartId($cart->id);
+        $order = new Order($order_id);
+        $order->setInvoice();
 
         $optional = array(
             'redirect_url' => $parameter['callback_url'],
