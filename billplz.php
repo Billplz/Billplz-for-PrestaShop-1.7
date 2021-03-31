@@ -43,10 +43,10 @@ class Billplz extends \PaymentModule
     {
         $this->name = 'billplz';
         $this->tab = 'payments_gateways';
-        $this->version = '3.1.0';
-        $this->ps_versions_compliancy = array('min' => '1.7.5.0', 'max' => '1.7');
+        $this->version = '3.1.1';
+        $this->ps_versions_compliancy = array('min' => '1.7.4.4', 'max' => '1.7');
         //$this->limited_countries = array('my');
-        $this->author = 'Billplz Sdn. Bhd.';
+        $this->author = 'Billplz Sdn Bhd';
         $this->controllers = array('return', 'validation');
         $this->is_eu_compatible = 0;
 
