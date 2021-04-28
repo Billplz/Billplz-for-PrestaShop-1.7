@@ -38,64 +38,32 @@ class BillplzConnect
 
     public $header;
 
-    const TIMEOUT = 10; //10 Seconds
     const PRODUCTION_URL = 'https://www.billplz.com/api/';
-    const STAGING_URL = 'https://billplz-staging.herokuapp.com/api/';
+    const STAGING_URL = 'https://www.billplz-sandbox.com/api/';
 
     public function __construct($api_key)
     {
         $this->api_key = $api_key;
+
         $this->process = curl_init();
+
         $this->header = $api_key . ':';
         curl_setopt($this->process, CURLOPT_HEADER, 0);
         curl_setopt($this->process, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($this->process, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($this->process, CURLOPT_SSL_VERIFYPEER, 0);
-        curl_setopt($this->process, CURLOPT_TIMEOUT, self::TIMEOUT);
+        curl_setopt($this->process, CURLOPT_TIMEOUT, 10);
         curl_setopt($this->process, CURLOPT_USERPWD, $this->header);
     }
 
-    public function setMode($is_production = false)
+    public function setStaging($is_staging = false)
     {
-        $this->is_production = $is_production;
-        if ($is_production) {
-            $this->url = self::PRODUCTION_URL;
-        } else {
+        $this->is_staging = $is_staging;
+        if ($is_staging) {
             $this->url = self::STAGING_URL;
+        } else {
+            $this->url = self::PRODUCTION_URL;
         }
-    }
-
-    public function detectMode()
-    {
-        $this->url = self::PRODUCTION_URL;
-        $this->detect_mode = true;
-        return $this;
-    }
-
-    public function getWebhookRank()
-    {
-        $url = $this->url . 'v4/webhook_rank';
-
-        curl_setopt($this->process, CURLOPT_URL, $url);
-        curl_setopt($this->process, CURLOPT_POST, 0);
-        $body = curl_exec($this->process);
-        $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
-        $return = array($header, $body);
-
-        return $return;
-    }
-
-    public function getCollectionIndex($parameter = array())
-    {
-        $url = $this->url . 'v4/collections?' . http_build_query($parameter);
-
-        curl_setopt($this->process, CURLOPT_URL, $url);
-        curl_setopt($this->process, CURLOPT_POST, 0);
-        $body = curl_exec($this->process);
-        $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
-        $return = array($header, $body);
-
-        return $return;
     }
 
     public function createCollection($title, $optional = array())
@@ -124,6 +92,19 @@ class BillplzConnect
 
         curl_setopt($this->process, CURLOPT_URL, $url);
         curl_setopt($this->process, CURLOPT_POSTFIELDS, $body);
+        $body = curl_exec($this->process);
+        $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
+        $return = array($header, $body);
+
+        return $return;
+    }
+
+    public function getCollectionIndex($parameter = array())
+    {
+        $url = $this->url . 'v4/collections?' . http_build_query($parameter);
+
+        curl_setopt($this->process, CURLOPT_URL, $url);
+        curl_setopt($this->process, CURLOPT_POST, 0);
         $body = curl_exec($this->process);
         $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
         $return = array($header, $body);
@@ -204,7 +185,7 @@ class BillplzConnect
         $body = curl_exec($this->process);
         $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
         $return = array($header, $body);
-
+        
         return $return;
     }
 
@@ -219,20 +200,20 @@ class BillplzConnect
         $body = curl_exec($this->process);
         $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
         $return = array($header, $body);
-
+        
         return $return;
     }
 
     public function getMPICollection($id)
     {
         $url = $this->url . 'v4/mass_payment_instruction_collections/' . $id;
-
+        
         curl_setopt($this->process, CURLOPT_URL, $url);
         curl_setopt($this->process, CURLOPT_POST, 0);
         $body = curl_exec($this->process);
         $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
         $return = array($header, $body);
-
+        
         return $return;
     }
 
@@ -272,31 +253,29 @@ class BillplzConnect
     {
         $signingString = '';
 
-        $billplz_params = Tools::getValue('billplz');
-
-        if (isset($billplz_params['id']) && isset($billplz_params['paid_at']) && isset($billplz_params['paid']) && isset($billplz_params['x_signature'])) {
+        if (isset($_GET['billplz']['id']) && isset($_GET['billplz']['paid_at']) && isset($_GET['billplz']['paid']) && isset($_GET['billplz']['x_signature'])) {
             $data = array(
-                'id' => $billplz_params['id'],
-                'paid_at' => $billplz_params['paid_at'],
-                'paid' => $billplz_params['paid'],
-                'x_signature' => $billplz_params['x_signature'],
+                'id' => $_GET['billplz']['id'],
+                'paid_at' => $_GET['billplz']['paid_at'],
+                'paid' => $_GET['billplz']['paid'],
+                'x_signature' => $_GET['billplz']['x_signature'],
             );
             $type = 'redirect';
-        } elseif (Tools::getIsset('x_signature')) {
+        } elseif (isset($_POST['x_signature'])) {
             $data = array(
-                'amount' => Tools::getValue('amount', ''),
-                'collection_id' => Tools::getValue('collection_id', ''),
-                'due_at' => Tools::getValue('due_at', ''),
-                'email' => Tools::getValue('email', ''),
-                'id' => Tools::getValue('id', ''),
-                'mobile' => Tools::getValue('mobile', ''),
-                'name' => Tools::getValue('name', ''),
-                'paid_amount' => Tools::getValue('paid_amount', ''),
-                'paid_at' => Tools::getValue('paid_at', ''),
-                'paid' => Tools::getValue('paid', ''),
-                'state' => Tools::getValue('state', ''),
-                'url' => Tools::getValue('url', ''),
-                'x_signature' => Tools::getValue('x_signature', ''),
+                'amount' => isset($_POST['amount']) ? $_POST['amount'] : '',
+                'collection_id' => isset($_POST['collection_id']) ? $_POST['collection_id'] : '',
+                'due_at' => isset($_POST['due_at']) ? $_POST['due_at'] : '',
+                'email' => isset($_POST['email']) ? $_POST['email'] : '',
+                'id' => isset($_POST['id']) ? $_POST['id'] : '',
+                'mobile' => isset($_POST['mobile']) ? $_POST['mobile'] : '',
+                'name' => isset($_POST['name']) ? $_POST['name'] : '',
+                'paid_amount' => isset($_POST['paid_amount']) ? $_POST['paid_amount'] : '',
+                'paid_at' => isset($_POST['paid_at']) ? $_POST['paid_at'] : '',
+                'paid' => isset($_POST['paid']) ? $_POST['paid'] : '',
+                'state' => isset($_POST['state']) ? $_POST['state'] : '',
+                'url' => isset($_POST['url']) ? $_POST['url'] : '',
+                'x_signature' => isset($_POST['x_signature']) ? $_POST['x_signature'] : '',
             );
             $type = 'callback';
         } else {
@@ -304,12 +283,12 @@ class BillplzConnect
         }
 
         foreach ($data as $key => $value) {
-            if (isset($billplz_params['id'])) {
+            if (isset($_GET['billplz']['id'])) {
                 $signingString .= 'billplz' . $key . $value;
             } else {
                 $signingString .= $key . $value;
             }
-            if (($key === 'url' && Tools::getIsset('x_signature')) || ($key === 'paid' && isset($billplz_params['id']))) {
+            if (($key === 'url' && isset($_POST['x_signature'])) || ($key === 'paid' && isset($_GET['billplz']['id']))) {
                 break;
             } else {
                 $signingString .= '|';
@@ -386,7 +365,7 @@ class BillplzConnect
         $body = curl_exec($this->process);
         $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
         $return = array($header, $body);
-
+ 
         return $return;
     }
 
@@ -399,7 +378,6 @@ class BillplzConnect
         $body = curl_exec($this->process);
         $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
         $return = array($header, $body);
-
         return $return;
     }
 
@@ -407,23 +385,19 @@ class BillplzConnect
     {
         $url = $this->url . 'v3/collections/' . $id . '/payment_methods';
 
-        curl_setopt($this->process, CURLOPT_URL, $url);
-        curl_setopt($this->process, CURLOPT_POST, 0);
-        $body = curl_exec($this->process);
-        $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
+        $body = $this->process->get($url);
+        $header = $this->process->info['http_code'];
         $return = array($header, $body);
-
+ 
         return $return;
     }
 
     public function getTransactionIndex($id, $parameter)
     {
-        $url = $this->url . 'v3/bills/' . $id . '/transactions?' . http_build_query($parameter);
+        $url = $this->url . 'v3/bills/' . $id . '/transactions';
 
-        curl_setopt($this->process, CURLOPT_URL, $url);
-        curl_setopt($this->process, CURLOPT_POST, 0);
-        $body = curl_exec($this->process);
-        $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
+        $body = $this->process->get($url, $parameter);
+        $header = $this->process->info['http_code'];
         $return = array($header, $body);
 
         return $return;
@@ -438,18 +412,14 @@ class BillplzConnect
 
         unset($parameter['collection_id']);
         $data = $parameter;
-        $header = $this->header;
 
         $body = [];
         foreach ($data['payment_methods'] as $param) {
             $body[] = http_build_query($param);
         }
 
-        curl_setopt($this->process, CURLOPT_URL, $url);
-        curl_setopt($this->process, CURLOPT_CUSTOMREQUEST, 'PUT');
-        curl_setopt($this->process, CURLOPT_POSTFIELDS, implode('&', $body));
-        $body = curl_exec($this->process);
-        $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
+        $body = $this->process->put($url, $body);
+        $header = $this->process->info['http_code'];
         $return = array($header, $body);
 
         return $return;
@@ -466,10 +436,8 @@ class BillplzConnect
 
         $url = $this->url . 'v3/bank_verification_services?' . $parameter;
 
-        curl_setopt($this->process, CURLOPT_URL, $url);
-        curl_setopt($this->process, CURLOPT_POST, 0);
-        $body = curl_exec($this->process);
-        $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
+        $body = $this->process->get($url);
+        $header = $this->process->info['http_code'];
         $return = array($header, $body);
 
         return $return;
@@ -479,10 +447,8 @@ class BillplzConnect
     {
         $url = $this->url . 'v3/bank_verification_services/' . $id;
 
-        curl_setopt($this->process, CURLOPT_URL, $url);
-        curl_setopt($this->process, CURLOPT_POST, 0);
-        $body = curl_exec($this->process);
-        $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
+        $body = $this->process->get($url);
+        $header = $this->process->info['http_code'];
         $return = array($header, $body);
 
         return $return;
@@ -492,10 +458,8 @@ class BillplzConnect
     {
         $url = $this->url . 'v3/bank_verification_services';
 
-        curl_setopt($this->process, CURLOPT_URL, $url);
-        curl_setopt($this->process, CURLOPT_POSTFIELDS, http_build_query($parameter));
-        $body = curl_exec($this->process);
-        $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
+        $body = $this->process->post($url, $parameter);
+        $header = $this->process->info['http_code'];
         $return = array($header, $body);
         return $return;
     }
@@ -504,18 +468,11 @@ class BillplzConnect
     {
         $url = $this->url . 'v3/fpx_banks';
 
-        curl_setopt($this->process, CURLOPT_URL, $url);
-        curl_setopt($this->process, CURLOPT_POST, 0);
-        $body = curl_exec($this->process);
-        $header = curl_getinfo($this->process, CURLINFO_HTTP_CODE);
+        $body = $this->process->get($url);
+        $header = $this->process->info['http_code'];
         $return = array($header, $body);
 
         return $return;
-    }
-
-    public function closeConnection()
-    {
-        curl_close($this->process);
     }
 
     public function toArray($json)

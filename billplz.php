@@ -43,7 +43,7 @@ class Billplz extends \PaymentModule
     {
         $this->name = 'billplz';
         $this->tab = 'payments_gateways';
-        $this->version = '3.1.1';
+        $this->version = '3.2.0';
         $this->ps_versions_compliancy = array('min' => '1.7.4.4', 'max' => '1.7');
         //$this->limited_countries = array('my');
         $this->author = 'Billplz Sdn Bhd';
@@ -53,8 +53,12 @@ class Billplz extends \PaymentModule
         $this->currencies = true;
         $this->currencies_mode = 'radio';
 
-        $config = Configuration::getMultiple(array('BILLPLZ_API_KEY', 'BILLPLZ_COLLECTION_ID', 'BILLPLZ_X_SIGNATURE'));
+        $config = Configuration::getMultiple(array('BILLPLZ_IS_STAGING', 'BILLPLZ_API_KEY', 'BILLPLZ_COLLECTION_ID', 'BILLPLZ_X_SIGNATURE'));
 
+        if (!empty($config['BILLPLZ_IS_STAGING'])) {
+            $this->is_staging = $config['BILLPLZ_IS_STAGING'];
+        }
+        
         if (!empty($config['BILLPLZ_API_KEY'])) {
             $this->api_key = $config['BILLPLZ_API_KEY'];
         }
@@ -74,7 +78,7 @@ class Billplz extends \PaymentModule
         $this->description = $this->trans('Accept payments by Billplz.', array(), 'Modules.Billplz.Admin');
         $this->confirmUninstall = $this->trans('Are you sure about removing these details?', array(), 'Modules.Billplz.Admin');
 
-        if (!isset($this->api_key) || !isset($this->collection_id) || !isset($this->x_signature)) {
+        if (!isset($this->is_staging) || !isset($this->api_key) || !isset($this->collection_id) || !isset($this->x_signature)) {
             $this->warning = $this->trans('API Key, Collection ID and X Signature Key must be configured before using this module.', array(), 'Modules.Billplz.Admin');
         }
 
@@ -90,8 +94,9 @@ class Billplz extends \PaymentModule
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `cart_id` int(11) NOT NULL,
                 `bill_id` varchar(255) NOT NULL,
-                PRIMARY KEY (`id`)
-            ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;'
+                PRIMARY KEY (`id`),
+                INDEX `bill_id` (`bill_id`)
+            ) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;'
         );
 
         if (!parent::install() || !$this->registerHook('paymentReturn') || !$this->registerHook('paymentOptions') || !$this->installOrderState()) {
@@ -128,7 +133,8 @@ class Billplz extends \PaymentModule
 
     public function uninstall()
     {
-        if (!Configuration::deleteByName('BILLPLZ_API_KEY')
+        if (!Configuration::deleteByName('BILLPLZ_IS_STAGING')
+            || !Configuration::deleteByName('BILLPLZ_API_KEY')
             || !Configuration::deleteByName('BILLPLZ_COLLECTION_ID')
             || !Configuration::deleteByName('BILLPLZ_X_SIGNATURE')
             || !parent::uninstall()) {
@@ -141,7 +147,9 @@ class Billplz extends \PaymentModule
     protected function _postValidation()
     {
         if (Tools::isSubmit('btnSubmit')) {
-            if (!Tools::getValue('BILLPLZ_API_KEY')) {
+            if (!Tools::getValue('BILLPLZ_IS_STAGING')) {
+                $this->_postErrors[] = $this->trans('Billplz mode are required.', array(), 'Modules.Billplz.Admin');
+            } elseif (!Tools::getValue('BILLPLZ_API_KEY')) {
                 $this->_postErrors[] = $this->trans('API Key are required.', array(), 'Modules.Billplz.Admin');
             } elseif (!Tools::getValue('BILLPLZ_COLLECTION_ID')) {
                 $this->_postErrors[] = $this->trans('Collection ID is required.', array(), "Modules.Billplz.Admin");
@@ -154,6 +162,7 @@ class Billplz extends \PaymentModule
     protected function _postProcess()
     {
         if (Tools::isSubmit('btnSubmit')) {
+            Configuration::updateValue('BILLPLZ_IS_STAGING', Tools::getValue('BILLPLZ_IS_STAGING'));
             Configuration::updateValue('BILLPLZ_API_KEY', Tools::getValue('BILLPLZ_API_KEY'));
             Configuration::updateValue('BILLPLZ_COLLECTION_ID', Tools::getValue('BILLPLZ_COLLECTION_ID'));
             Configuration::updateValue('BILLPLZ_X_SIGNATURE', Tools::getValue('BILLPLZ_X_SIGNATURE'));
@@ -241,6 +250,24 @@ class Billplz extends \PaymentModule
                 ),
                 'input' => array(
                     array(
+                        'type' => 'radio',
+                        'label' => $this->trans('Account Type', array(), 'Modules.Billplz.Admin'),
+                        'name' => 'BILLPLZ_IS_STAGING',
+                        'values' => array(
+                            array(
+                                'id' => 'production',
+                                'label' => $this->l('Production'),
+                                'value' => 'no'
+                            ),
+                            array(
+                              'id' => 'sandbox',
+                              'label' => $this->l('Sandbox'),
+                              'value' => 'yes'
+                            )
+                        ),
+                        'required' => true,
+                    ),
+                    array(
                         'type' => 'text',
                         'label' => $this->trans('API Secret Key', array(), 'Modules.Billplz.Admin'),
                         'name' => 'BILLPLZ_API_KEY',
@@ -293,6 +320,7 @@ class Billplz extends \PaymentModule
     public function getConfigFieldsValues()
     {
         return array(
+            'BILLPLZ_IS_STAGING' => Tools::getValue('BILLPLZ_IS_STAGING', Configuration::get('BILLPLZ_IS_STAGING')),
             'BILLPLZ_API_KEY' => Tools::getValue('BILLPLZ_API_KEY', Configuration::get('BILLPLZ_API_KEY')),
             'BILLPLZ_COLLECTION_ID' => Tools::getValue('BILLPLZ_COLLECTION_ID', Configuration::get('BILLPLZ_COLLECTION_ID')),
             'BILLPLZ_X_SIGNATURE' => Tools::getValue('BILLPLZ_X_SIGNATURE', Configuration::get('BILLPLZ_X_SIGNATURE')),

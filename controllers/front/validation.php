@@ -64,7 +64,7 @@ class BillplzValidationModuleFrontController extends ModuleFrontController
         $currency = $this->context->currency;
         $total = $cart->getOrderTotal(true, Cart::BOTH);
 
-        $config = Configuration::getMultiple(array('BILLPLZ_API_KEY', 'BILLPLZ_COLLECTION_ID'));
+        $config = Configuration::getMultiple(array('BILLPLZ_IS_STAGING', 'BILLPLZ_API_KEY', 'BILLPLZ_COLLECTION_ID'));
 
         $products = $cart->getProducts();
         $product_description = '';
@@ -105,7 +105,8 @@ class BillplzValidationModuleFrontController extends ModuleFrontController
         );
 
         $connect = new BillplzConnect(trim($config['BILLPLZ_API_KEY']));
-        $connect->detectMode();
+        $connect->setStaging($config['BILLPLZ_IS_STAGING'] == 'yes');
+
         $billplz = new BillplzApi($connect);
         list($rheader, $rbody) = $billplz->toArray($billplz->createBill($parameter, $optional, '0'));
 
