@@ -73,7 +73,18 @@ class BillplzReturnModuleFrontController extends ModuleFrontController
                     $order = new Order($order_id);
                 }
                 if ($order->getCurrentState() != Configuration::get('PS_OS_PAYMENT')) {
-                    $order->setCurrentState(Configuration::get('PS_OS_PAYMENT'));
+
+                    $new_history = new OrderHistory();
+                    $new_history->id_order = Order::getIdByCartId($cart_id);
+                    $new_history->changeIdOrderState(Configuration::get('PS_OS_PAYMENT'), $order, true);
+                    $new_history->addWithemail(true);
+
+                    $payment = $order->getOrderPaymentCollection();
+                    if (isset($payment[0]))
+                    {
+                        $payment[0]->transaction_id = $data['id'];
+                        $payment[0]->save();
+                    }
                 }
             }
             exit;
