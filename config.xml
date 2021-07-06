@@ -4,7 +4,7 @@
     <displayName><![CDATA[Billplz]]></displayName>
     <version><![CDATA[3.2.0]]></version>
     <description><![CDATA[Accept payments using Billplz.]]></description>
-    <author><![CDATA[Billplz Sdn Bhd]]></author>
+    <author><![CDATA[BILLPLZ SDN BHD]]></author>
     <tab><![CDATA[payments_gateways]]></tab>
 	<confirmUninstall><![CDATA[Are you sure about removing these details?]]></confirmUninstall>
     <is_configurable>1</is_configurable>
