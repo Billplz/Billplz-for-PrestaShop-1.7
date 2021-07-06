@@ -133,6 +133,7 @@ class Billplz extends \PaymentModule
 
     public function uninstall()
     {
+        Db::getInstance()->execute('DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'billplz`;');
         if (!Configuration::deleteByName('BILLPLZ_IS_STAGING')
             || !Configuration::deleteByName('BILLPLZ_API_KEY')
             || !Configuration::deleteByName('BILLPLZ_COLLECTION_ID')
