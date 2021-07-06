@@ -3,7 +3,7 @@
     <name>billplz</name>
     <displayName><![CDATA[Billplz]]></displayName>
     <version><![CDATA[3.2.0]]></version>
-    <description><![CDATA[Accept payments by Billplz.]]></description>
+    <description><![CDATA[Accept payments using Billplz.]]></description>
     <author><![CDATA[Billplz Sdn Bhd]]></author>
     <tab><![CDATA[payments_gateways]]></tab>
 	<confirmUninstall><![CDATA[Are you sure about removing these details?]]></confirmUninstall>
