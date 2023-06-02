@@ -46,7 +46,7 @@ class BillplzValidationModuleFrontController extends ModuleFrontController
         }
 
         if (!$authorized) {
-            die($this->module->getTranslator()->trans('This payment method is not available.', array(), 'Modules.Billplz.Shop'));
+            Tools::displayError($this->module->getTranslator()->trans('This payment method is not available.', array(), 'Modules.Billplz.Shop'));
         }
 
         $customer = new Customer($cart->id_customer);
@@ -111,7 +111,13 @@ class BillplzValidationModuleFrontController extends ModuleFrontController
         list($rheader, $rbody) = $billplz->toArray($billplz->createBill($parameter, $optional, '0'));
 
         if ($rheader !== 200) {
-            Tools::redirect('index.php?controller=order&step=1');
+            if (isset($rbody['error']['message'])) {
+                PrestaShopLogger::addLog('BillplzValidationModuleFrontController::postProcess - Unable to create a bill: ' . $rbody['error']['message'], 4, null, 'Order', (int) $order_id, true);
+            } else {
+                PrestaShopLogger::addLog('BillplzValidationModuleFrontController::postProcess - Unable to create a bill', 4, null, 'Order', (int) $order_id, true);
+            }
+
+            die(Tools::displayError($this->module->getTranslator()->trans('Payment error! Please contact admin for further assistance.', array(), 'Modules.Billplz.Shop')));
         }
 
         Db::getInstance()->insert(
