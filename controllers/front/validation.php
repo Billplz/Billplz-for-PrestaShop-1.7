@@ -126,9 +126,9 @@ class BillplzValidationModuleFrontController extends ModuleFrontController
 
                 $formatted_error_message = '[' . $rbody['error']['type'] . '] ' . $error_messages;
 
-                PrestaShopLogger::addLog('BillplzValidationModuleFrontController::postProcess - Unable to create a bill: ' . $formatted_error_message, 4, null, 'Order', (int) $order_id, true);
+                PrestaShopLogger::addLog('BillplzValidationModuleFrontController::postProcess - Unable to create a bill: ' . $formatted_error_message, 4, (int) $rheader, 'Order', (int) $order_id, true);
             } else {
-                PrestaShopLogger::addLog('BillplzValidationModuleFrontController::postProcess - Unable to create a bill. Response header: ' . $rheader, 4, null, 'Order', (int) $order_id, true);
+                PrestaShopLogger::addLog('BillplzValidationModuleFrontController::postProcess - Unable to create a bill', 4, (int) $rheader, 'Order', (int) $order_id, true);
             }
 
             die(Tools::displayError($this->module->getTranslator()->trans('Payment error! Please contact admin for further assistance.', array(), 'Modules.Billplz.Shop')));
