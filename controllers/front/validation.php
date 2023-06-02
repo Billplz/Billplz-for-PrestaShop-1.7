@@ -111,10 +111,24 @@ class BillplzValidationModuleFrontController extends ModuleFrontController
         list($rheader, $rbody) = $billplz->toArray($billplz->createBill($parameter, $optional, '0'));
 
         if ($rheader !== 200) {
-            if (isset($rbody['error']['message'])) {
-                PrestaShopLogger::addLog('BillplzValidationModuleFrontController::postProcess - Unable to create a bill: ' . $rbody['error']['message'], 4, null, 'Order', (int) $order_id, true);
+            if (isset($rbody['error'])) {
+                if (is_array($rbody['error']['message'])) {
+                    $error_messages = [];
+
+                    foreach ($rbody['error']['message'] as $error_message) {
+                        $error_messages[] = $error_message;
+                    }
+
+                    $error_messages = implode(' | ', $error_messages);
+                } else {
+                    $error_messages = $rbody['error']['message'];
+                }
+
+                $formatted_error_message = '[' . $rbody['error']['type'] . '] ' . $error_messages;
+
+                PrestaShopLogger::addLog('BillplzValidationModuleFrontController::postProcess - Unable to create a bill: ' . $formatted_error_message, 4, null, 'Order', (int) $order_id, true);
             } else {
-                PrestaShopLogger::addLog('BillplzValidationModuleFrontController::postProcess - Unable to create a bill', 4, null, 'Order', (int) $order_id, true);
+                PrestaShopLogger::addLog('BillplzValidationModuleFrontController::postProcess - Unable to create a bill. Response header: ' . $rheader, 4, null, 'Order', (int) $order_id, true);
             }
 
             die(Tools::displayError($this->module->getTranslator()->trans('Payment error! Please contact admin for further assistance.', array(), 'Modules.Billplz.Shop')));
