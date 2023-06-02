@@ -46,7 +46,7 @@ class BillplzValidationModuleFrontController extends ModuleFrontController
         }
 
         if (!$authorized) {
-            Tools::displayError($this->module->getTranslator()->trans('This payment method is not available.', array(), 'Modules.Billplz.Shop'));
+            die(Tools::displayError($this->module->getTranslator()->trans('This payment method is not available.', array(), 'Modules.Billplz.Shop')));
         }
 
         $customer = new Customer($cart->id_customer);
